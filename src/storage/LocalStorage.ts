@@ -38,7 +38,7 @@ export class Local {
     });
   };
 
-  _saveFileFir = async (file: File) => {
+  _saveFileAsFir = async (file: File) => {
     let data = {
       created: file.created,
       modified: file.modified,
@@ -55,6 +55,55 @@ export class Local {
     })
   };
 
+  _saveFileFir = async (file: File) => {
+    const res = await fetch('https://sih-inter2023-default-rtdb.firebaseio.com/form.json',{
+      method : 'GET',
+      headers :{
+        'Content-Type' : 'application/json'
+      }
+    })
+    let data = await res.json();
+    const keys1 = Object.keys(data);
+    let ans;
+    keys1.forEach(async (key)=>{
+      const rawData = data[key];
+      console.log(rawData.name)
+      if(rawData.name==file.name) {ans = key;}  
+    })
+    data = {
+      created: file.created,
+      modified: file.modified,
+      content: file.content,
+      name: file.name,
+      billType: file.billType,
+    };
+    const res1 = await fetch(`https://sih-inter2023-default-rtdb.firebaseio.com/form/${ans}/.json`,{
+      method : 'PUT',
+      headers :{
+        'Content-Type' : 'application/json'
+      },
+      body : JSON.stringify(data)
+    })
+  };
+
+  _getFileFir = async(name1: string) =>{
+    console.log(name1)
+    const res = await fetch('https://sih-inter2023-default-rtdb.firebaseio.com/form.json',{
+      method : 'GET',
+      headers :{
+        'Content-Type' : 'application/json'
+      }
+    })
+    const data = await res.json();
+    const keys1 = Object.keys(data);
+    let ans = {}
+    keys1.forEach(async (key)=>{
+      const rawData = data[key];
+      console.log(rawData.name)
+      if(rawData.name==name1) {ans = rawData;}  
+    })
+    return ans;
+  }
   _getFile = async (name: string) => {
     const rawData = await Storage.get({ key: name });
     return JSON.parse(rawData.value);
@@ -82,23 +131,9 @@ export class Local {
       }
     })
     const data = await res.json();
-    // const { keys } = await Storage.keys();
-    // console.log(keys);
-    // for (let i = 0; i < keys.length; i++) {
-    //   let fname = keys[i];
-    //   const data = await this._getFile(fname);
-    //   arr[fname] = (data as any).modified;
-    // }
-    // console.log(typeof(data))
-    // console.log(Object.keys(data))
-    // console.log(data)
     const keys1 = Object.keys(data);
     keys1.forEach(async (key)=>{
-      
       const rawData = data[key];
-      // console.log(rawData);
-      // const parseddata = await JSON.parse(rawData);
-      // console.log(parseddata)
       arr[rawData.name] = (rawData as any).modified;
     })
     console.log(arr)
@@ -107,6 +142,28 @@ export class Local {
 
   _deleteFile = async (name: string) => {
     await Storage.remove({ key: name });
+  };
+  _deleteFileFir = async (name1: string) => {
+    const res = await fetch('https://sih-inter2023-default-rtdb.firebaseio.com/form.json',{
+      method : 'GET',
+      headers :{
+        'Content-Type' : 'application/json'
+      }
+    })
+    const data = await res.json();
+    const keys1 = Object.keys(data);
+    let ans;
+    keys1.forEach(async (key)=>{
+      const rawData = data[key];
+      console.log(rawData.name)
+      if(rawData.name==name1) {ans = key;}  
+    })
+    const res1 = await fetch(`https://sih-inter2023-default-rtdb.firebaseio.com/form/${ans}.json`,{
+      method : 'DELETE',
+      headers :{
+        'Content-Type' : 'application/json'
+      }
+    })
   };
 
   _checkKey = async (key) => {

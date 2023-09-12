@@ -43,7 +43,7 @@ const Menu: React.FC<{
     }
     return true;
   };
-  const doSaveFirebase = async(filename)=>{
+  const doSaveAsFirebase = async(filename)=>{
     if (filename) {
       // console.log(filename, _validateName(filename));
       if (await _validateName(filename)) {
@@ -59,7 +59,7 @@ const Menu: React.FC<{
         );
         // const data = { created: file.created, modified: file.modified, content: file.content, password: file.password };
         // console.log(JSON.stringify(data));
-        props.store._saveFileFir(file);
+        props.store._saveFileAsFir(file);
         props.updateSelectedFile(filename);
         setShowAlert4(true);
       } else {
@@ -107,6 +107,24 @@ const Menu: React.FC<{
       props.bT
     );
     props.store._saveFile(file);
+    props.updateSelectedFile(props.file);
+    setShowAlert2(true);
+  };
+  const doSaveonFir = () => {
+    if (props.file === "default") {
+      setShowAlert1(true);
+      return;
+    }
+    const content = encodeURIComponent(AppGeneral.getSpreadsheetContent());
+    const data = props.store._getFileFir(props.file);
+    const file = new File(
+      (data as any).created,
+      new Date().toString(),
+      content,
+      props.file,
+      props.bT
+    );
+    props.store._saveFileFir(file);
     props.updateSelectedFile(props.file);
     setShowAlert2(true);
   };
@@ -185,10 +203,18 @@ const Menu: React.FC<{
         onDidDismiss={() => props.setM()}
         buttons={[
           {
+            text: "SaveAs on Firebase",
+            icon: save,
+            handler: () => {
+              setShowAlert7(true);
+              console.log("Save clicked");
+            },
+          },
+          {
             text: "Save on Firebase",
             icon: saveOutline,
             handler: () => {
-              setShowAlert7(true);
+              doSaveonFir();
               console.log("Save clicked");
             },
           },
@@ -238,7 +264,7 @@ const Menu: React.FC<{
           {
             text: "Ok",
             handler: (alertData) => {
-              doSaveFirebase(alertData.filename);
+              doSaveAsFirebase(alertData.filename);
             },
           },
         ]}
