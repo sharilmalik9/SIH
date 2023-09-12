@@ -53,12 +53,14 @@ const Files: React.FC<{
 
   const temp = async () => {
     const data = await props.store._getAllFiles();
-    const fileList = Object.keys(data).map((key) => {
+    const moredata = await props.store._getAllFilesFir();
+    var obj1 = {...data, ...moredata};
+    const fileList = Object.keys(obj1).map((key) => {
       return (
         <IonItemGroup key={key}>
           <IonItem>
             <IonLabel>{key}</IonLabel>
-            {_formatDate(data[key])}
+            {_formatDate(obj1[key])}
             <IonIcon
               icon={create}
               color='warning'
@@ -83,6 +85,37 @@ const Files: React.FC<{
         </IonItemGroup>
       );
     });
+    // const data1 = await props.store._getAllFilesFir();
+    // const fileList1 = Object.keys(data1).map((key) => {
+    //   return (
+    //     <IonItemGroup key={key}>
+    //       <IonItem>
+    //         <IonLabel>{key}</IonLabel>
+    //         {_formatDate(data[key])}
+    //         <IonIcon
+    //           icon={create}
+    //           color='warning'
+    //           slot='end'
+    //           size='large'
+    //           onClick={() => {
+    //             setListFiles(false);
+    //             editFile(key);
+    //           }}
+    //         />
+    //         <IonIcon
+    //           icon={trash}
+    //           color='danger'
+    //           slot='end'
+    //           size='large'
+    //           onClick={() => {
+    //             setListFiles(false);
+    //             deleteFile(key);
+    //           }}
+    //         />
+    //       </IonItem>
+    //     </IonItemGroup>
+    //   );
+    // });
 
     const ourModal = (
       <IonModal isOpen={listFiles} onDidDismiss={() => setListFiles(false)}>

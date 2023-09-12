@@ -63,12 +63,45 @@ export class Local {
   _getAllFiles = async () => {
     let arr = {};
     const { keys } = await Storage.keys();
-    console.log(keys);
+    // console.log(keys);
     for (let i = 0; i < keys.length; i++) {
       let fname = keys[i];
       const data = await this._getFile(fname);
+      // console.log(data)
       arr[fname] = (data as any).modified;
     }
+    console.log(arr)
+    return arr;
+  };
+  _getAllFilesFir = async () => {
+    let arr = {};
+    const res = await fetch('https://sih-inter2023-default-rtdb.firebaseio.com/form.json',{
+      method : 'GET',
+      headers :{
+        'Content-Type' : 'application/json'
+      }
+    })
+    const data = await res.json();
+    // const { keys } = await Storage.keys();
+    // console.log(keys);
+    // for (let i = 0; i < keys.length; i++) {
+    //   let fname = keys[i];
+    //   const data = await this._getFile(fname);
+    //   arr[fname] = (data as any).modified;
+    // }
+    // console.log(typeof(data))
+    // console.log(Object.keys(data))
+    // console.log(data)
+    const keys1 = Object.keys(data);
+    keys1.forEach(async (key)=>{
+      
+      const rawData = data[key];
+      // console.log(rawData);
+      // const parseddata = await JSON.parse(rawData);
+      // console.log(parseddata)
+      arr[rawData.name] = (rawData as any).modified;
+    })
+    console.log(arr)
     return arr;
   };
 
